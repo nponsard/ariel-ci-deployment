@@ -1,0 +1,38 @@
+## githubConfigUrl is the GitHub url for where you want to configure runners
+## ex: https://github.com/myorg/myrepo or https://github.com/myorg or https://github.com/enterprises/myenterprise
+githubConfigUrl: "https://github.com/nponsard/ariel-os/"
+githubConfigSecret: pre-defined-secret
+
+maxRunners: 20
+minRunners: 2
+
+## template is the PodSpec for each runner Pod
+## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
+template:
+  spec:
+    containers:
+      - name: runner
+        image: docker.io/sautax/ariel-build-image:0.3
+        command: ["/home/runner/run.sh"]
+        env:
+          - name: ACTIONS_RUNNER_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+            value: /home/runner/k8s/index.js
+        # mount the local cache, it is not shared between nodes
+        volumeMounts:
+          - mountPath: /mnt/sccache
+            name: sccache
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: "kubernetes.io/hostname"
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            actions-ephemeral-runner: "True"
+    volumes:
+      - name: sccache
+        hostPath:
+          path: /mnt/sccache # directory location on host
