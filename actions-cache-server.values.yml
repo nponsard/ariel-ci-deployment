@@ -1,0 +1,105 @@
+# Values for github-actions-cache-server.
+# This is a YAML-formatted file.
+
+replicaCount: 2
+
+strategy:
+  type: Recreate
+
+image:
+  repository: ghcr.io/falcondev-oss/github-actions-cache-server
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 640Mi
+  requests:
+    cpu: 500m
+    memory: 640Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: cache
+readinessProbe:
+  httpGet:
+    path: /
+    port: cache
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+persistentVolumeClaim:
+  enabled: true
+  template:
+    metadata:
+      name: cache-data
+      labels: {}
+      annotations: {}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
+      volumeMode: Filesystem
+      storageClassName: "local-path"
+
+tmpVolume:
+  ephemeral:
+    volumeClaimTemplate:
+      metadata:
+        labels:
+          type: github-actions-cache-server-tmp
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: "local-path"
+        resources:
+          requests:
+            storage: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+apiBaseUrl: ""
+
+env:
+  - name: DEBUG
+    value: "false"

@@ -1,10 +1,12 @@
 ## githubConfigUrl is the GitHub url for where you want to configure runners
 ## ex: https://github.com/myorg/myrepo or https://github.com/myorg or https://github.com/enterprises/myenterprise
-githubConfigUrl: "https://github.com/nponsard/ariel-os/"
+githubConfigUrl: "https://github.com/ariel-os"
 githubConfigSecret: pre-defined-secret
 
 maxRunners: 20
-minRunners: 2
+minRunners: 10
+
+runnerGroup: Ariel
 
 ## template is the PodSpec for each runner Pod
 ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
@@ -12,9 +14,22 @@ template:
   spec:
     containers:
       - name: runner
-        image: docker.io/sautax/ariel-build-image:0.3
+        image: docker.io/sautax/ariel-build-image:0.5
         command: ["/home/runner/run.sh"]
         env:
+          # Move cargo home so it can be cached.
+          - name: CARGO_HOME
+            value: /home/runner/.cargo
+          - name: SCCACHE_DIR
+            value: /mnt/sccache
+          - name: SCCACHE_CACHE_SIZE
+            value: "300G"
+          - name: RUSTC_WRAPPER
+            value: sccache
+          - name: CUSTOM_ACTIONS_RESULTS_URL
+            value: http://action-cache-github-actions-cache-server.arc-runners.svc.cluster.local/
+          - name: ACTIONS_RESULTS_URL
+            value: http://action-cache-github-actions-cache-server.arc-runners.svc.cluster.local/
           - name: ACTIONS_RUNNER_POD_NAME
             valueFrom:
               fieldRef:
