@@ -54,6 +54,12 @@ helm install "minio-sccache" minio/minio --namespace arc-runners --values minio.
 
 ## Action cache server
 
+### install postgresql
+
+```sh
+helm upgrade --install --namespace arc-runners cache-postgres oci://registry-1.docker.io/bitnamicharts/postgresql
+```
+
 ```sh
 helm upgrade --namespace arc-runners --install action-cache oci://ghcr.io/falcondev-oss/charts/github-actions-cache-server -f actions-cache-server.values.yml
 ```

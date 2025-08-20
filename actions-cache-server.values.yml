@@ -17,11 +17,6 @@ serviceAccount:
   create: true
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
 
 podSecurityContext:
   fsGroup: 1000
@@ -41,10 +36,10 @@ service:
 resources:
   limits:
     cpu: 500m
-    memory: 640Mi
+    memory: 1Gi
   requests:
     cpu: 500m
-    memory: 640Mi
+    memory: 1Gi
 
 livenessProbe:
   httpGet:
@@ -57,13 +52,13 @@ readinessProbe:
 
 autoscaling:
   enabled: true
-  minReplicas: 1
-  maxReplicas: 100
+  minReplicas: 2
+  maxReplicas: 6
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 70
 
 persistentVolumeClaim:
-  enabled: true
+  enabled: false
   template:
     metadata:
       name: cache-data
@@ -92,14 +87,48 @@ tmpVolume:
           requests:
             storage: 2Gi
 
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-apiBaseUrl: ""
-
 env:
   - name: DEBUG
     value: "false"
+
+  - name: DB_POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: cache-postgres-postgresql
+        key: postgres-password
+
+  - name: DB_POSTGRES_USER
+    value: "postgres"
+
+  - name: DB_POSTGRES_DATABASE
+    value: "actions_cache"
+
+  - name: DB_POSTGRES_HOST
+    value: "cache-postgres-postgresql"
+
+  - name: DB_POSTGRES_PORT
+    value: "5432"
+
+  - name: DB_DRIVER
+    value: "postgres"
+
+  - name: STORAGE_DRIVER
+    value: "s3"
+
+  - name: STORAGE_S3_BUCKET
+    value: "sccache"
+
+  - name: AWS_ENDPOINT_URL
+    value: "http://minio-sccache:9000"
+
+  - name: AWS_ACCESS_KEY_ID
+    value: aaa
+
+  - name: AWS_SECRET_ACCESS_KEY
+    value: aaa
+
+  - name: CACHE_CLEANUP_OLDER_THAN_DAYS
+    value: "10"
+
+  - name: ENABLE_DIRECT_DOWNLOADS
+    value: "true"
