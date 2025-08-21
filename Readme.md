@@ -49,7 +49,7 @@ kubectl label nodes tribe-ariel-ci1 minio=true
 ```
 
 ```sh
-helm install "minio-sccache" minio/minio --namespace arc-runners --values minio.values.yml
+helm upgrade --install "minio-sccache" minio/minio --namespace arc-runners --values minio.values.yml
 ```
 
 ## Action cache server

@@ -6,9 +6,15 @@ minioAPIPort: "9000"
 ## Change consoleService.port to change external port number
 minioConsolePort: "9001"
 
+image:
+  repository: quay.io/minio/minio
+  tag: RELEASE.2025-07-18T21-56-31Z
+  pullPolicy: IfNotPresent
+
 replicas: 2
 drivesPerNode: 1
-mode: distributed ## other supported values are "standalone"
+# mode: distributed ## other supported values are "standalone"
+mode: distributed
 
 ## Update strategy for Deployments
 deploymentUpdate:

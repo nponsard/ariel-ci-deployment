@@ -1,7 +1,7 @@
 # Values for github-actions-cache-server.
 # This is a YAML-formatted file.
 
-replicaCount: 2
+replicaCount: 1
 
 strategy:
   type: Recreate
@@ -36,7 +36,7 @@ service:
 resources:
   limits:
     cpu: 500m
-    memory: 1Gi
+    memory: 3Gi
   requests:
     cpu: 500m
     memory: 1Gi
@@ -53,7 +53,7 @@ readinessProbe:
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 6
+  maxReplicas: 4
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 70
 
