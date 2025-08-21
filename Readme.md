@@ -60,6 +60,19 @@ helm upgrade --install "minio-sccache" minio/minio --namespace arc-runners --val
 helm upgrade --install --namespace arc-runners cache-postgres oci://registry-1.docker.io/bitnamicharts/postgresql
 ```
 
+### Setup cache server chart
+
+create an access key fo the bucket and store it in a secret named `cache-s3-access`
+
+```sh
+kubectl create secret generic cache-s3-access \
+   --namespace=arc-runners \
+   --from-literal=accessKey=<access key> \
+   --from-literal=secretKey=<secret key>
+```
+
+Then deploy the chart:
+
 ```sh
 helm upgrade --namespace arc-runners --install action-cache oci://ghcr.io/falcondev-oss/charts/github-actions-cache-server -f actions-cache-server.values.yml
 ```

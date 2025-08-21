@@ -36,7 +36,7 @@ service:
 resources:
   limits:
     cpu: 500m
-    memory: 3Gi
+    memory: 5Gi
   requests:
     cpu: 500m
     memory: 1Gi
@@ -53,7 +53,7 @@ readinessProbe:
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 4
+  maxReplicas: 2
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 70
 
@@ -122,10 +122,16 @@ env:
     value: "http://minio-sccache:9000"
 
   - name: AWS_ACCESS_KEY_ID
-    value: aaa
+    valueFrom:
+      secretKeyRef:
+        name: cache-s3-access
+        key: accessKey
 
   - name: AWS_SECRET_ACCESS_KEY
-    value: aaa
+    valueFrom:
+      secretKeyRef:
+        name: cache-s3-access
+        key: secretKey
 
   - name: CACHE_CLEANUP_OLDER_THAN_DAYS
     value: "10"
