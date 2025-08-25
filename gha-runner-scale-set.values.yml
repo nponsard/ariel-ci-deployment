@@ -1,12 +1,12 @@
 ## githubConfigUrl is the GitHub url for where you want to configure runners
 ## ex: https://github.com/myorg/myrepo or https://github.com/myorg or https://github.com/enterprises/myenterprise
-githubConfigUrl: "https://github.com/ariel-os"
+githubConfigUrl: "https://github.com/nponsard/cache-thing"
 githubConfigSecret: pre-defined-secret
 
-maxRunners: 20
-minRunners: 10
+maxRunners: 3
+minRunners: 1
 
-runnerGroup: Ariel
+# runnerGroup: Ariel
 
 ## template is the PodSpec for each runner Pod
 ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
@@ -40,13 +40,15 @@ template:
         volumeMounts:
           - mountPath: /mnt/sccache
             name: sccache
-    topologySpreadConstraints:
-      - maxSkew: 1
-        topologyKey: "kubernetes.io/hostname"
-        whenUnsatisfiable: ScheduleAnyway
-        labelSelector:
-          matchLabels:
-            actions-ephemeral-runner: "True"
+    # topologySpreadConstraints:
+    #   - maxSkew: 1
+    #     topologyKey: "kubernetes.io/hostname"
+    #     whenUnsatisfiable: ScheduleAnyway
+    #     labelSelector:
+    #       matchLabels:
+    #         actions-ephemeral-runner: "True"
+    nodeSelector:
+      kubernetes.io/hostname: tribe-ariel-ci1
     volumes:
       - name: sccache
         hostPath:

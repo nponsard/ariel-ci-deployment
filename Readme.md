@@ -14,14 +14,14 @@ kubectl create namespace arc-runners
 ```sh
  kubectl create secret generic pre-defined-secret \
    --namespace=arc-runners \
-   --from-literal=github_app_id=1807575 \
+   --from-literal=github_app_id=1738130 \
    --from-literal=github_app_installation_id=<installation_id> \
    --from-literal=github_app_private_key='-----BEGIN RSA PRIVATE KEY----- *********'
 ```
 
 ```sh
-INSTALLATION_NAME="arc-runners-inria"
-NAMESPACE="arc-runners"
+INSTALLATION_NAME="arc-runners-nponsard"
+NAMESPACE="arc-runners-nponsard"
 helm upgrade --install "${INSTALLATION_NAME}" \
     --namespace "${NAMESPACE}" \
     --create-namespace \
