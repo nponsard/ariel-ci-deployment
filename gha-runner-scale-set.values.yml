@@ -8,6 +8,17 @@ minRunners: 10
 
 runnerGroup: Ariel
 
+# containerMode:
+#   type: "kubernetes"  ## type can be set to dind or kubernetes
+#   ## the following is required when containerMode.type=kubernetes
+#   kubernetesModeWorkVolumeClaim:
+#     accessModes: ["ReadWriteOnce"]
+#     # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+#     storageClassName: "local-path"
+#     resources:
+#       requests:
+#         storage: 1Gi
+
 ## template is the PodSpec for each runner Pod
 ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
 template:
@@ -21,7 +32,7 @@ template:
           - name: CARGO_HOME
             value: /home/runner/.cargo
           - name: SCCACHE_DIR
-            value: /mnt/sccache
+            value: /cache/sccache
           - name: SCCACHE_CACHE_SIZE
             value: "300G"
           - name: RUSTC_WRAPPER
@@ -38,7 +49,7 @@ template:
             value: /home/runner/k8s/index.js
         # mount the local cache, it is not shared between nodes
         volumeMounts:
-          - mountPath: /mnt/sccache
+          - mountPath: /cache
             name: sccache
     topologySpreadConstraints:
       - maxSkew: 1
@@ -50,4 +61,5 @@ template:
     volumes:
       - name: sccache
         hostPath:
-          path: /mnt/sccache # directory location on host
+          path: /cache # directory location on host
+          
