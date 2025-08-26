@@ -45,7 +45,7 @@ ENV HOME /home/${USERNAME}
 USER runner
 
 # Runner download supports amd64 as x64
-RUN curl -L -o runner.tar.gz https://github.com/falcondev-oss/github-actions-runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz \
+RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz \
   && tar xzf ./runner.tar.gz \
   && rm runner.tar.gz \
   && sudo ./bin/installdependencies.sh \
