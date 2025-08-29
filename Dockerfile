@@ -27,7 +27,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install dependencies
 RUN apt-get update \
   # Tool dependencies
-  && apt-get install -y --no-install-recommends curl sudo ca-certificates unzip libssl-dev\
+  && apt-get install -y --no-install-recommends curl sudo ca-certificates unzip libssl-dev zstd \
   # Ariel dependencies
   && apt-get install -y git ninja-build pkg-config libudev-dev clang gcc-arm-none-eabi gcc-riscv64-unknown-elf gcc curl build-essential \
   && apt-get dist-clean
