@@ -14,7 +14,7 @@ template:
   spec:
     containers:
       - name: runner
-        image: docker.io/sautax/ariel-build-image:0.5
+        image: docker.io/sautax/ariel-build-image:0.7
         command: ["/home/runner/run.sh"]
         env:
           # Move cargo home so it can be cached.
@@ -26,10 +26,6 @@ template:
             value: "300G"
           - name: RUSTC_WRAPPER
             value: sccache
-          - name: CUSTOM_ACTIONS_RESULTS_URL
-            value: http://action-cache-github-actions-cache-server.arc-runners.svc.cluster.local/
-          - name: ACTIONS_RESULTS_URL
-            value: http://action-cache-github-actions-cache-server.arc-runners.svc.cluster.local/
           - name: ACTIONS_RUNNER_POD_NAME
             valueFrom:
               fieldRef:
@@ -38,7 +34,7 @@ template:
             value: /home/runner/k8s/index.js
         # mount the local cache, it is not shared between nodes
         volumeMounts:
-          - mountPath: /mnt/sccache
+          - mountPath: /cache/
             name: sccache
     # topologySpreadConstraints:
     #   - maxSkew: 1
@@ -52,4 +48,4 @@ template:
     volumes:
       - name: sccache
         hostPath:
-          path: /mnt/sccache # directory location on host
+          path: /cache/ # directory location on host
